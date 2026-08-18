@@ -1,0 +1,145 @@
+import { IncidentReport, SafetyAlert, CampusLocation, UserProfile } from './types';
+
+// Mock University Campus Center (e.g., Central Quad)
+export const CAMPUS_CENTER = {
+  lat: 42.3601,
+  lng: -71.0942,
+  zoom: 16,
+};
+
+export const MOCK_USER: UserProfile = {
+  id: 'usr_student_01',
+  name: 'Alex Morgan',
+  full_name: 'Alex Morgan',
+  email: 'alex.morgan@university.edu',
+  role: 'student',
+  department: 'Computer Science & Engineering',
+};
+
+export const MOCK_ADMIN: UserProfile = {
+  id: 'usr_admin_01',
+  name: 'Captain Sarah Vance',
+  full_name: 'Captain Sarah Vance',
+  email: 's.vance@university.edu',
+  role: 'admin',
+  department: 'Campus Public Safety & Security',
+};
+
+export const CAMPUS_LOCATIONS: CampusLocation[] = [
+  { id: 'loc_1', name: 'Main Library - North Entrance', code: 'LIB-N', latitude: 42.3605, longitude: -71.0948, category: 'library' },
+  { id: 'loc_2', name: 'Student Quad & Plaza', code: 'QUAD', latitude: 42.3601, longitude: -71.0942, category: 'academic' },
+  { id: 'loc_3', name: 'North Residence Hall Complex', code: 'DORM-N', latitude: 42.3615, longitude: -71.0935, category: 'dorm' },
+  { id: 'loc_4', name: 'West Campus Parking Garage (Deck 3)', code: 'PKG-W', latitude: 42.3592, longitude: -71.0965, category: 'parking' },
+  { id: 'loc_5', name: 'Science & Innovation Lab', code: 'SCI-B', latitude: 42.3610, longitude: -71.0955, category: 'academic' },
+  { id: 'loc_6', name: 'Athletic Center & Gym Field', code: 'GYM', latitude: 42.3585, longitude: -71.0930, category: 'sports' },
+  { id: 'loc_7', name: 'Dining Commons Courtyard', code: 'DINE', latitude: 42.3598, longitude: -71.0925, category: 'dining' },
+];
+
+export const INITIAL_ALERTS: SafetyAlert[] = [
+  {
+    id: 'alt_1',
+    title: 'Advisory: Severe Weather & Poor Visibility',
+    message: 'Dense fog and heavy rain expected near West Quad after 9 PM. Security escorts are available 24/7 by calling Campus Safety.',
+    level: 'warning',
+    location_scope: 'Campus-Wide',
+    is_active: true,
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+  },
+  {
+    id: 'alt_2',
+    title: 'Maintenance Alert: Walkway Lighting Repair',
+    message: 'Electrical repair underway on South Pathway near Athletic Field. Facilities crews on-site. Temporary flood lights installed.',
+    level: 'info',
+    location_scope: 'South Pathway',
+    is_active: true,
+    created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
+  },
+];
+
+export const INITIAL_REPORTS: IncidentReport[] = [
+  {
+    id: 'REP-2026-081',
+    title: 'Broken Lamppost along Library Pathway',
+    description: 'The main lamppost between North Library Entrance and the Quad has been completely unlit for 2 consecutive nights. The area is extremely dark after sunset.',
+    category: 'lighting',
+    severity: 'medium',
+    status: 'under_review',
+    location_name: 'Main Library - North Entrance',
+    latitude: 42.3605,
+    longitude: -71.0948,
+    is_anonymous: false,
+    user_id: 'usr_student_01',
+    user_name: 'Alex Morgan',
+    image_url: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=600',
+    resolution_notes: 'Facilities crew dispatched. Replacement LED module scheduled for installation.',
+    created_at: new Date(Date.now() - 3600000 * 14).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+  },
+  {
+    id: 'REP-2026-082',
+    title: 'Exposed Electrical Wiring Near Science Annex',
+    description: 'Discovered open junction box with exposed wires sticking out near the ground level emergency exit door. High risk of moisture hazard.',
+    category: 'hazard',
+    severity: 'high',
+    status: 'under_review',
+    location_name: 'Science & Innovation Lab',
+    latitude: 42.3610,
+    longitude: -71.0955,
+    is_anonymous: true,
+    user_id: 'usr_student_99',
+    user_name: 'Anonymous Student',
+    image_url: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&q=80&w=600',
+    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+  },
+  {
+    id: 'REP-2026-083',
+    title: 'Bicycle Theft Reported at Parking Deck 3',
+    description: 'Trek Mountain Bike cut from lock rack near staircase B between 2 PM and 5 PM. Security camera nearby should be reviewed.',
+    category: 'theft',
+    severity: 'medium',
+    status: 'reported',
+    location_name: 'West Campus Parking Garage (Deck 3)',
+    latitude: 42.3592,
+    longitude: -71.0965,
+    is_anonymous: false,
+    user_id: 'usr_student_01',
+    user_name: 'Alex Morgan',
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+  },
+  {
+    id: 'REP-2026-080',
+    title: 'Slippery Ice Patch on Dining Hall Steps',
+    description: 'Black ice formed on external staircase. Salt applied by security team and hazard cone placed.',
+    category: 'hazard',
+    severity: 'low',
+    status: 'resolved',
+    location_name: 'Dining Commons Courtyard',
+    latitude: 42.3598,
+    longitude: -71.0925,
+    is_anonymous: false,
+    user_id: 'usr_student_05',
+    user_name: 'Taylor Smith',
+    resolution_notes: 'Salt spread and warning cone placed by Facilities at 8:15 AM.',
+    created_at: new Date(Date.now() - 3600000 * 36).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 20).toISOString(),
+  },
+  {
+    id: 'REP-2026-084',
+    title: 'Suspicious Individual Loitering Near Dorm Entrance',
+    description: 'Person wearing dark hoodie attempting to tailgate students entering North Dorm door 2 without keycard.',
+    category: 'suspicious',
+    severity: 'emergency',
+    status: 'under_review',
+    location_name: 'North Residence Hall Complex',
+    latitude: 42.3615,
+    longitude: -71.0935,
+    is_anonymous: true,
+    user_id: 'usr_student_88',
+    user_name: 'Anonymous Student',
+    resolution_notes: 'Campus Security patrol dispatched to intercept and check credentials.',
+    created_at: new Date(Date.now() - 3600000 * 1).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 0.5).toISOString(),
+  }
+];

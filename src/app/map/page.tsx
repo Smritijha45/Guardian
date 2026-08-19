@@ -60,8 +60,10 @@ export default function SafetyMapPage() {
           
           {/* Search */}
           <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <label htmlFor="map-search-input" className="sr-only">Search location or issue</label>
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" aria-hidden="true" />
             <input
+              id="map-search-input"
               type="text"
               placeholder="Search location or issue..."
               value={searchQuery}
@@ -71,10 +73,12 @@ export default function SafetyMapPage() {
           </div>
 
           {/* Category Dropdown */}
+          <label htmlFor="map-category-select" className="sr-only">Filter by category</label>
           <select
+            id="map-category-select"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none"
+            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             <option value="all">All Categories</option>
             <option value="hazard">Physical Hazards</option>
@@ -87,10 +91,12 @@ export default function SafetyMapPage() {
           </select>
 
           {/* Status Dropdown */}
+          <label htmlFor="map-status-select" className="sr-only">Filter by status</label>
           <select
+            id="map-status-select"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none"
+            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             <option value="all">All Statuses</option>
             <option value="reported">Reported</option>
@@ -99,10 +105,12 @@ export default function SafetyMapPage() {
           </select>
 
           {/* Severity Dropdown */}
+          <label htmlFor="map-severity-select" className="sr-only">Filter by priority</label>
           <select
+            id="map-severity-select"
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
-            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none"
+            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             <option value="all">All Priorities</option>
             <option value="emergency">Emergency</option>

@@ -116,28 +116,31 @@ export default function AuthPage() {
             {mode === 'signup' && (
               <>
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Full Name</label>
+                  <label htmlFor="auth-full-name" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Full Name</label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" aria-hidden="true" />
                     <input
+                      id="auth-full-name"
                       type="text"
                       required
+                      autoComplete="name"
                       placeholder="e.g. Aarav Sharma"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"
+                      className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Account Role</label>
+                  <label htmlFor="auth-role" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Account Role</label>
                   <div className="relative">
-                    <UserCheck className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <UserCheck className="w-4 h-4 text-slate-400 absolute left-3 top-3" aria-hidden="true" />
                     <select
+                      id="auth-role"
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                      className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"
+                      className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
                     >
                       <option value="student">Student</option>
                       <option value="admin">Campus Admin</option>
@@ -148,31 +151,35 @@ export default function AuthPage() {
             )}
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">University Email</label>
+              <label htmlFor="auth-email" className="text-xs font-bold text-slate-700 uppercase tracking-wider">University Email</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" aria-hidden="true" />
                 <input
+                  id="auth-email"
                   type="email"
                   required
+                  autoComplete="email"
                   placeholder="student@mmumullana.org"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
+              <label htmlFor="auth-password" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" aria-hidden="true" />
                 <input
+                  id="auth-password"
                   type="password"
                   required
+                  autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
                 />
               </div>
             </div>

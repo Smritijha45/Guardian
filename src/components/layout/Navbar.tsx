@@ -59,14 +59,15 @@ export function Navbar() {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1" aria-label="Main Navigation">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                       isActive
                         ? 'bg-brand-50 text-brand-700 font-semibold'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
@@ -84,20 +85,30 @@ export function Navbar() {
               {/* Role Switcher (Student vs Admin Simulator) */}
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium rounded-xl border border-slate-200 transition-colors"
+                  aria-label="Switch Role Context"
+                  aria-haspopup="menu"
+                  aria-expanded={roleDropdownOpen}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium rounded-xl border border-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 >
-                  <UserCheck className="w-3.5 h-3.5 text-brand-600" />
+                  <UserCheck className="w-3.5 h-3.5 text-brand-600" aria-hidden="true" />
                   <span>Role: <strong className="capitalize text-slate-900">{currentRole}</strong></span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className="w-3 h-3 text-slate-400" aria-hidden="true" />
                 </button>
 
                 {roleDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-soft-lg border border-slate-200 py-1.5 z-50 animate-in fade-in zoom-in-95">
+                  <div
+                    role="menu"
+                    aria-label="Role choices"
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-soft-lg border border-slate-200 py-1.5 z-50 animate-in fade-in zoom-in-95"
+                  >
                     <div className="px-3 py-1.5 border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                       Switch Role Context
                     </div>
                     <button
+                      type="button"
+                      role="menuitem"
                       onClick={() => {
                         setRole('student');
                         setRoleDropdownOpen(false);
@@ -107,9 +118,11 @@ export function Navbar() {
                       }`}
                     >
                       <span>Student View</span>
-                      {currentRole === 'student' && <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" />}
+                      {currentRole === 'student' && <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" aria-hidden="true" />}
                     </button>
                     <button
+                      type="button"
+                      role="menuitem"
                       onClick={() => {
                         setRole('admin');
                         setRoleDropdownOpen(false);
@@ -119,7 +132,7 @@ export function Navbar() {
                       }`}
                     >
                       <span>Admin View</span>
-                      {currentRole === 'admin' && <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" />}
+                      {currentRole === 'admin' && <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" aria-hidden="true" />}
                     </button>
                   </div>
                 )}
@@ -128,29 +141,34 @@ export function Navbar() {
               {/* Auth Sign In / Sign Out Button */}
               {isAuthenticated ? (
                 <button
+                  type="button"
                   onClick={() => signOut()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-700 text-xs font-medium rounded-xl border border-slate-200 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-700 text-xs font-medium rounded-xl border border-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  aria-label="Sign out of Supabase"
                   title="Sign out of Supabase"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
                   <span className="hidden sm:inline">Sign Out</span>
                 </button>
               ) : (
                 <Link
                   href="/auth"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-medium rounded-xl border border-brand-200 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-medium rounded-xl border border-brand-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 >
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-3.5 h-3.5" aria-hidden="true" />
                   <span className="hidden sm:inline">Sign In</span>
                 </Link>
               )}
 
               {/* Mobile menu trigger */}
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+                aria-label="Toggle navigation menu"
+                aria-expanded={mobileMenuOpen}
+                className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -158,7 +176,7 @@ export function Navbar() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 animate-in slide-in-from-top-2">
+          <nav className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 animate-in slide-in-from-top-2" aria-label="Mobile Navigation">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -188,7 +206,7 @@ export function Navbar() {
                 Immediate Emergency SOS
               </Button>
             </div>
-          </div>
+          </nav>
         )}
       </header>
 

@@ -16,10 +16,10 @@ export function Footer() {
               </div>
               <span className="text-lg font-bold text-slate-900">Guardian</span>
             </div>
-            <p className="text-sm text-slate-500 leading-relaxed max-w-sm">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-sm">
               Empowering students, faculty, and campus security with real-time hazard tracking, anonymous incident reporting, and immediate emergency response dispatch.
             </p>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="flex items-center gap-2 text-xs text-slate-600">
               <span>Campus Safety Department &bull; Built with Supabase & Next.js</span>
             </div>
           </div>
@@ -27,18 +27,18 @@ export function Footer() {
           {/* Emergency Numbers */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Emergency Hotlines</h4>
-            <ul className="space-y-2 text-xs text-slate-600">
+            <ul className="space-y-2 text-xs text-slate-700">
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-rose-600">MMDU Dispatch:</span> +91 1731-274475
+                <span className="font-semibold text-rose-600">MMDU Dispatch:</span> <a href="tel:+911731274475" className="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">+91 1731-274475</a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-slate-800">National Emergency:</span> 112 (or 100)
+                <span className="font-semibold text-slate-800">National Emergency:</span> <a href="tel:112" className="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">112 (or 100)</a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-brand-600">Night Escort:</span> +91 1731-274476
+                <span className="font-semibold text-brand-600">Night Escort:</span> <a href="tel:+911731274476" className="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">+91 1731-274476</a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-slate-800">MMIMSR Hospital:</span> +91 1731-274477
+                <span className="font-semibold text-slate-800">MMIMSR Hospital:</span> <a href="tel:+911731274477" className="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">+91 1731-274477</a>
               </li>
             </ul>
           </div>
@@ -46,19 +46,21 @@ export function Footer() {
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Navigation</h4>
-            <ul className="space-y-2 text-xs text-slate-600">
-              <li><Link href="/" className="hover:text-brand-600 transition-colors">Safety Overview</Link></li>
-              <li><Link href="/dashboard" className="hover:text-brand-600 transition-colors">Student Dashboard</Link></li>
-              <li><Link href="/report" className="hover:text-brand-600 transition-colors">File a Safety Report</Link></li>
-              <li><Link href="/map" className="hover:text-brand-600 transition-colors">Campus Incident Map</Link></li>
-              <li><Link href="/my-reports" className="hover:text-brand-600 transition-colors">My Submitted Reports</Link></li>
-              <li><Link href="/admin" className="hover:text-brand-600 transition-colors">Public Safety Admin</Link></li>
-            </ul>
+            <nav aria-label="Footer Navigation">
+              <ul className="space-y-2 text-xs text-slate-700">
+                <li><Link href="/" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Safety Overview</Link></li>
+                <li><Link href="/dashboard" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Student Dashboard</Link></li>
+                <li><Link href="/report" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">File a Safety Report</Link></li>
+                <li><Link href="/map" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Campus Incident Map</Link></li>
+                <li><Link href="/my-reports" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">My Submitted Reports</Link></li>
+                <li><Link href="/admin" className="hover:text-brand-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Public Safety Admin</Link></li>
+              </ul>
+            </nav>
           </div>
 
         </div>
 
-        <div className="mt-12 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div className="mt-12 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-4">
           <p>&copy; {new Date().getFullYear()} Guardian Campus Safety Platform. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">

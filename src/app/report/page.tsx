@@ -196,10 +196,11 @@ function ReportFormContent() {
               
               {/* Title input */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="report-title" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Report Title <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="report-title"
                   type="text"
                   required
                   placeholder="e.g. Unlit streetlight near Library North Entrance"
@@ -211,23 +212,24 @@ function ReportFormContent() {
 
               {/* Category Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label id="category-group-label" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Category <span className="text-rose-500">*</span>
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div role="group" aria-labelledby="category-group-label" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {categoryOptions.map((opt) => (
                     <button
                       type="button"
                       key={opt.value}
+                      aria-pressed={category === opt.value}
                       onClick={() => setCategory(opt.value)}
-                      className={`p-3 rounded-2xl border text-left transition-all ${
+                      className={`p-3 rounded-2xl border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                         category === opt.value
                           ? 'bg-brand-50 border-brand-500 text-brand-900 ring-2 ring-brand-500/20 shadow-xs'
                           : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       <div className="text-xs font-bold">{opt.label}</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">{opt.desc}</div>
+                      <div className="text-[11px] text-slate-600 mt-0.5 line-clamp-1">{opt.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -235,16 +237,17 @@ function ReportFormContent() {
 
               {/* Severity Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label id="severity-group-label" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Severity / Priority Level
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div role="group" aria-labelledby="severity-group-label" className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {(['low', 'medium', 'high', 'emergency'] as ReportSeverity[]).map((sev) => (
                     <button
                       type="button"
                       key={sev}
+                      aria-pressed={severity === sev}
                       onClick={() => setSeverity(sev)}
-                      className={`p-3 rounded-2xl border text-center transition-all ${
+                      className={`p-3 rounded-2xl border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                         severity === sev
                           ? sev === 'emergency'
                             ? 'bg-rose-50 border-rose-500 text-rose-900 ring-2 ring-rose-500/20'
@@ -262,10 +265,11 @@ function ReportFormContent() {
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="report-description" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Detailed Description <span className="text-rose-500">*</span>
                 </label>
                 <textarea
+                  id="report-description"
                   required
                   rows={4}
                   placeholder="Provide details such as exact landmark, time noticed, or any safety risks present..."
@@ -288,10 +292,10 @@ function ReportFormContent() {
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-brand-50/60 border border-brand-200/80 rounded-2xl">
                 <div className="flex items-center gap-2.5">
-                  <Navigation className="w-5 h-5 text-brand-600 shrink-0" />
+                  <Navigation className="w-5 h-5 text-brand-600 shrink-0" aria-hidden="true" />
                   <div>
                     <div className="text-xs font-bold text-slate-900">Current GPS Location</div>
-                    <div className="text-[11px] text-slate-500">Auto-detect coordinates via browser GPS</div>
+                    <div className="text-[11px] text-slate-600">Auto-detect coordinates via browser GPS</div>
                   </div>
                 </div>
                 <Button
@@ -308,10 +312,11 @@ function ReportFormContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  <label htmlFor="campus-landmark-select" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Select Campus Landmark
                   </label>
                   <select
+                    id="campus-landmark-select"
                     value={locationName}
                     onChange={handleLocationPresetChange}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-slate-900 bg-white"
@@ -326,7 +331,7 @@ function ReportFormContent() {
 
                 <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-1">
                   <div className="font-semibold text-slate-800 flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-brand-600" />
+                    <MapPin className="w-4 h-4 text-brand-600" aria-hidden="true" />
                     Pinned Coordinates
                   </div>
                   <div>Latitude: <strong className="font-mono text-slate-900">{latitude.toFixed(5)}</strong></div>
@@ -354,53 +359,56 @@ function ReportFormContent() {
               
               {/* Anonymous Toggle */}
               <div className="flex items-center justify-between p-4 bg-brand-50/50 border border-brand-200/80 rounded-2xl">
-                <div className="flex items-center gap-3">
+                <label htmlFor="anonymous-checkbox" className="flex items-center gap-3 cursor-pointer">
                   <div className="w-10 h-10 rounded-xl bg-white border border-brand-200 text-brand-600 flex items-center justify-center shrink-0">
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="w-5 h-5" aria-hidden="true" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-900">Submit Anonymously</h4>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-600">
                       Your name and email will be hidden from security officers and public records.
                     </p>
                   </div>
-                </div>
+                </label>
 
-                <label className="relative inline-flex items-center cursor-pointer">
+                <div className="relative inline-flex items-center">
                   <input
+                    id="anonymous-checkbox"
                     type="checkbox"
+                    aria-label="Submit Anonymously"
                     checked={isAnonymous}
                     onChange={(e) => setIsAnonymous(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600" />
-                </label>
+                  <label htmlFor="anonymous-checkbox" className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600 cursor-pointer" />
+                </div>
               </div>
 
               {/* Photo Upload Dropzone */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="photo-upload-input" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Photo Attachment (Optional)
                 </label>
 
                 {imagePreview ? (
                   <div className="relative w-full max-w-sm h-48 rounded-2xl overflow-hidden border border-slate-200 group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={imagePreview} alt="Incident preview" className="w-full h-full object-cover" />
+                    <img src={imagePreview} alt="Uploaded incident photo evidence preview" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setImagePreview(null)}
-                      className="absolute top-2 right-2 p-1.5 bg-slate-900/70 text-white rounded-full hover:bg-slate-900 transition-colors"
+                      aria-label="Remove photo attachment"
+                      className="absolute top-2 right-2 p-1.5 bg-slate-900/70 text-white rounded-full hover:bg-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-200 rounded-2xl hover:border-brand-500 hover:bg-slate-50/50 transition-colors cursor-pointer text-center p-4">
-                    <Camera className="w-8 h-8 text-slate-400 mb-2" />
+                  <label htmlFor="photo-upload-input" className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-200 rounded-2xl hover:border-brand-500 hover:bg-slate-50/50 transition-colors cursor-pointer text-center p-4 focus-within:ring-2 focus-within:ring-brand-500">
+                    <Camera className="w-8 h-8 text-slate-400 mb-2" aria-hidden="true" />
                     <span className="text-xs font-bold text-slate-700">Click to upload photo evidence</span>
-                    <span className="text-[11px] text-slate-400 mt-1">PNG, JPG or WEBP up to 5MB</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                    <span className="text-[11px] text-slate-600 mt-1">PNG, JPG or WEBP up to 5MB</span>
+                    <input id="photo-upload-input" type="file" accept="image/*" className="hidden" aria-label="Upload photo evidence" onChange={handleImageUpload} />
                   </label>
                 )}
               </div>

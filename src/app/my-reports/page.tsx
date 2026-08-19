@@ -66,26 +66,35 @@ export default function MyReportsPage() {
         </div>
 
         {/* Tab Filters */}
-        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+        <div role="tablist" aria-label="Submission status filter tabs" className="flex items-center gap-2 border-b border-slate-200 pb-2">
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'all'}
             onClick={() => setActiveTab('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
               activeTab === 'all' ? 'bg-brand-500 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
             }`}
           >
             All Submissions ({mySubmissions.length})
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'active'}
             onClick={() => setActiveTab('active')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
               activeTab === 'active' ? 'bg-brand-500 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
             }`}
           >
             Active ({mySubmissions.filter((r) => r.status !== 'resolved').length})
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'resolved'}
             onClick={() => setActiveTab('resolved')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
               activeTab === 'resolved' ? 'bg-brand-500 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
             }`}
           >
@@ -96,9 +105,9 @@ export default function MyReportsPage() {
         {/* Reports List */}
         {filteredReports.length === 0 ? (
           <Card className="p-12 text-center space-y-3">
-            <FileText className="w-12 h-12 text-slate-300 mx-auto" />
+            <FileText className="w-12 h-12 text-slate-300 mx-auto" aria-hidden="true" />
             <h3 className="text-base font-bold text-slate-800">No Reports Found</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <p className="text-xs text-slate-600 max-w-sm mx-auto">
               You have no reports matching this filter view.
             </p>
             <Link href="/report">
@@ -125,15 +134,15 @@ export default function MyReportsPage() {
                   <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{report.description}</p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-slate-500 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-slate-600 border-t border-slate-100">
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="flex items-center gap-1">📍 {report.location_name}</span>
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
+                      <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                       {new Date(report.created_at).toLocaleDateString('en-IN')}
                     </span>
                     {report.is_anonymous && (
-                      <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                      <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
                         Anonymous
                       </span>
                     )}
@@ -145,6 +154,7 @@ export default function MyReportsPage() {
                       size="sm"
                       icon={<Eye className="w-3.5 h-3.5" />}
                       onClick={() => setSelectedReportId(report.id)}
+                      aria-label={`View details and timeline for report ${report.id}`}
                     >
                       View Details & Timeline
                     </Button>

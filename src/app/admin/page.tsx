@@ -177,8 +177,10 @@ export default function AdminDashboardPage() {
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
               <div className="relative w-full sm:w-auto flex-1">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <label htmlFor="admin-search-input" className="sr-only">Search incidents by ID or location</label>
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" aria-hidden="true" />
                 <input
+                  id="admin-search-input"
                   type="text"
                   placeholder="Search ID, location..."
                   value={searchQuery}
@@ -189,7 +191,9 @@ export default function AdminDashboardPage() {
 
               <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
                 {/* Category Filter */}
+                <label htmlFor="admin-category-select" className="sr-only">Filter by category</label>
                 <select
+                  id="admin-category-select"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                   className="w-full sm:w-auto px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
@@ -205,7 +209,9 @@ export default function AdminDashboardPage() {
                 </select>
 
                 {/* Status Filter */}
+                <label htmlFor="admin-status-select" className="sr-only">Filter by status</label>
                 <select
+                  id="admin-status-select"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="w-full sm:w-auto px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
@@ -222,18 +228,18 @@ export default function AdminDashboardPage() {
 
           <CardContent className="p-0 overflow-x-auto">
             {filteredReports.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400">
+              <div className="p-8 text-center text-xs text-slate-500">
                 No reports found matching selected filters.
               </div>
             ) : (
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+              <table className="w-full text-left text-xs text-slate-700" aria-label="Campus incident reports list">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="p-4">Ref ID</th>
-                    <th className="p-4">Category & Details</th>
-                    <th className="p-4">Location</th>
-                    <th className="p-4">Status & Admin Action</th>
-                    <th className="p-4 text-right">Actions</th>
+                    <th scope="col" className="p-4">Ref ID</th>
+                    <th scope="col" className="p-4">Category & Details</th>
+                    <th scope="col" className="p-4">Location</th>
+                    <th scope="col" className="p-4">Status & Admin Action</th>
+                    <th scope="col" className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -274,6 +280,7 @@ export default function AdminDashboardPage() {
                           variant="soft-blue"
                           icon={<Edit3 className="w-3.5 h-3.5" />}
                           onClick={() => handleOpenEditModal(report)}
+                          aria-label={`Respond and action incident ${report.id}`}
                         >
                           Respond & Action
                         </Button>
@@ -282,8 +289,9 @@ export default function AdminDashboardPage() {
                           variant="ghost"
                           className="text-rose-600 hover:bg-rose-50"
                           onClick={() => handleDelete(report.id)}
+                          aria-label={`Delete report ${report.id}`}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                         </Button>
                       </td>
                     </tr>
@@ -376,11 +384,12 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Assign Action</label>
+                <label htmlFor="admin-assign-action-select" className="text-xs font-bold text-slate-700">Assign Action</label>
                 <select
+                  id="admin-assign-action-select"
                   value={assignedActionInput}
                   onChange={(e) => setAssignedActionInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-medium"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-medium focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   <option value="Increase lighting and security patrols.">Increase lighting and security patrols.</option>
                   <option value="Deploy campus security escort patrol.">Deploy campus security escort patrol.</option>
@@ -391,22 +400,24 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Admin Action Note</label>
+                <label htmlFor="admin-action-note-textarea" className="text-xs font-bold text-slate-700">Admin Action Note</label>
                 <textarea
+                  id="admin-action-note-textarea"
                   rows={2}
                   placeholder='e.g., "Security team notified. Patrol increased from 8 PM–11 PM."'
                   value={actionNoteInput}
                   onChange={(e) => setActionNoteInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-800"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Status Transition</label>
+                <label htmlFor="admin-status-transition-select" className="text-xs font-bold text-slate-700">Status Transition</label>
                 <select
+                  id="admin-status-transition-select"
                   value={newStatusSelect}
                   onChange={(e) => setNewStatusSelect(e.target.value as ReportStatus)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-semibold"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   <option value="reported">reported (Newly Filed)</option>
                   <option value="under_review">under_review (Reviewing)</option>

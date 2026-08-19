@@ -14,9 +14,9 @@ export function cn(...inputs: (string | undefined | null | false)[]) {
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', children, icon, disabled, ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', type = 'button', children, icon, disabled, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.97]';
+      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.97]';
 
     const variants = {
       primary: 'bg-brand-500 hover:bg-brand-600 text-white focus-visible:ring-brand-500 shadow-md shadow-brand-500/15 hover:shadow-lg hover:shadow-brand-500/20',
@@ -36,11 +36,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        type={type}
         disabled={disabled}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         {...props}
       >
-        {icon && <span className="inline-flex shrink-0 items-center">{icon}</span>}
+        {icon && <span className="inline-flex shrink-0 items-center" aria-hidden="true">{icon}</span>}
         {children}
       </button>
     );

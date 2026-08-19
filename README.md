@@ -271,6 +271,3 @@ In `package.json`, the following scripts are available:
 
 ---
 
-<p align="center">
-  Built with ❤️ for <strong>Maharishi Markandeshwar University (MMDU)</strong> Campus Safety & Community Well-Being.
-</p>

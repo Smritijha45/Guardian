@@ -130,7 +130,7 @@ export default function MyReportsPage() {
                     <span className="flex items-center gap-1">📍 {report.location_name}</span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      {new Date(report.created_at).toLocaleDateString()}
+                      {new Date(report.created_at).toLocaleDateString('en-IN')}
                     </span>
                     {report.is_anonymous && (
                       <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
@@ -193,7 +193,7 @@ export default function MyReportsPage() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900">Incident Submitted</div>
-                    <div className="text-[11px] text-slate-500">{new Date(selectedReport.created_at).toLocaleString()}</div>
+                    <div className="text-[11px] text-slate-500">{new Date(selectedReport.created_at).toLocaleString('en-IN')}</div>
                   </div>
                 </div>
 

@@ -286,7 +286,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-slate-400 text-[11px] flex items-center gap-1 mt-1">
                 <Calendar className="w-3.5 h-3.5" />
-                Submitted: {new Date(editingReport.created_at).toLocaleString()}
+                Submitted: {new Date(editingReport.created_at).toLocaleString('en-IN')}
               </div>
             </div>
 

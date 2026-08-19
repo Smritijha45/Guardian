@@ -52,13 +52,13 @@ export default function AuthPage() {
 
   const handleDemoStudent = () => {
     setRole('student');
-    showToast('Demo Mode', 'Signed in as Student (Alex Morgan)', 'success');
+    showToast('Demo Mode', 'Signed in as Student (Aarav Sharma)', 'success');
     router.push('/dashboard');
   };
 
   const handleDemoAdmin = () => {
     setRole('admin');
-    showToast('Demo Mode', 'Signed in as Safety Admin (Captain Sarah Vance)', 'success');
+    showToast('Demo Mode', 'Signed in as Safety Admin (Captain Rajesh Kumar)', 'success');
     router.push('/admin');
   };
 
@@ -108,7 +108,7 @@ export default function AuthPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Alex Morgan"
+                      placeholder="e.g. Aarav Sharma"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"
@@ -140,7 +140,7 @@ export default function AuthPage() {
                 <input
                   type="email"
                   required
-                  placeholder="student@university.edu"
+                  placeholder="student@mmumullana.org"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500/20"

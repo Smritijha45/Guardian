@@ -165,7 +165,7 @@ export default function SafetyMapPage() {
                   </div>
                   <div className="text-slate-400 flex items-center gap-1 mt-1">
                     <Calendar className="w-3.5 h-3.5" />
-                    Reported: {new Date(selectedReport.created_at).toLocaleString()}
+                    Reported: {new Date(selectedReport.created_at).toLocaleString('en-IN')}
                   </div>
                   <div className="text-slate-400 flex items-center gap-1">
                     <User className="w-3.5 h-3.5" />

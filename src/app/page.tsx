@@ -167,7 +167,7 @@ export default function LandingPage() {
                     <span className="text-xs font-semibold text-slate-600">📍 {alert.location_scope}</span>
                   </div>
                   <span className="text-[11px] text-slate-500">
-                    {new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(alert.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 <h3 className="font-bold text-base">{alert.title}</h3>
@@ -220,7 +220,7 @@ export default function LandingPage() {
             </div>
             <h3 className="text-lg font-semibold text-slate-900">Admin Resolution Tracking</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Campus Security updates status from &quot;Submitted&quot; to &quot;In Progress&quot; and &quot;Resolved&quot; with transparent log notes.
+              Campus Security updates status from &quot;Reported&quot; to &quot;Under Review&quot; and &quot;Resolved&quot; with transparent log notes.
             </p>
             <Link href="/admin" className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 hover:underline">
               Admin Console →

@@ -7,7 +7,7 @@ import { IncidentReport, ReportCategory, ReportSeverity } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge, SeverityBadge, CategoryBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Search, Filter, Layers, AlertOctagon, X, Calendar, User, CheckCircle2 } from 'lucide-react';
+import { MapPin, Search, Filter, Layers, AlertOctagon, X, Calendar, User, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 const DynamicSafetyMap = dynamic(() => import('@/components/map/SafetyMapComponent'), {
   ssr: false,
@@ -15,7 +15,7 @@ const DynamicSafetyMap = dynamic(() => import('@/components/map/SafetyMapCompone
 });
 
 export default function SafetyMapPage() {
-  const { reports } = useSafety();
+  const { reports, proactiveAlerts } = useSafety();
 
   // Filters State
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,11 +47,11 @@ export default function SafetyMapPage() {
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-              Real-Time Campus Map
+              Real-Time Campus Map &bull; MM(DU) Mullana, Haryana
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-            Interactive Safety & Hazard Map
+            Interactive Safety & Proactive Risk Map
           </h1>
         </div>
 
@@ -113,6 +113,41 @@ export default function SafetyMapPage() {
 
         </div>
       </div>
+
+      {/* Proactive Hotspot Alerts Banner on Safety Map (Kept Visible Always) */}
+      {proactiveAlerts.length > 0 && (
+        <div className="space-y-3">
+          <div className="text-xs font-extrabold text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4 text-rose-600 animate-pulse" />
+            Active Proactive Safety Hotspot Advisories (Visible on Campus Map)
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {proactiveAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2 text-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-rose-700 uppercase tracking-wider">⚠️ HIGH-RISK AREA</span>
+                  <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-extrabold text-[10px]">
+                    Risk {alert.riskScore}/100
+                  </span>
+                </div>
+                <div className="font-bold text-slate-900 text-sm">{alert.location}</div>
+                <div className="text-slate-700 font-medium">
+                  {alert.incidentCount} related incidents detected. {alert.timePattern}
+                </div>
+                <div className="text-slate-600 bg-white/80 p-2 rounded-xl border border-amber-200">
+                  <strong>Why Risky: </strong>{alert.whyRisky}
+                </div>
+                <div className="text-brand-900 bg-brand-50 p-2 rounded-xl border border-brand-200 font-medium">
+                  <strong>Recommended: </strong>{alert.recommendedAction}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Main Map Container & Incident Drawer */}
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -179,6 +214,36 @@ export default function SafetyMapPage() {
                     {selectedReport.description}
                   </p>
                 </div>
+
+                {selectedReport.ai_risk_reason && (
+                  <div className="p-3 bg-brand-50/70 border border-brand-200/80 rounded-2xl space-y-1 text-xs">
+                    <div className="flex items-center justify-between font-bold text-brand-900">
+                      <span>AI Intelligence Risk Reason</span>
+                      {selectedReport.ai_severity && (
+                        <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-brand-200 text-brand-900 font-extrabold">
+                          {selectedReport.ai_severity}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-700 text-[11px] leading-relaxed">
+                      {selectedReport.ai_risk_reason}
+                    </p>
+                  </div>
+                )}
+
+                {/* Admin Action Response */}
+                {selectedReport.action_note && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+                      <Clock className="w-4 h-4 text-amber-600" />
+                      Admin Action Response
+                    </div>
+                    {selectedReport.assigned_action && (
+                      <p className="text-[11px] text-slate-700"><strong>Action:</strong> {selectedReport.assigned_action}</p>
+                    )}
+                    <p className="text-xs text-amber-800">{selectedReport.action_note}</p>
+                  </div>
+                )}
 
                 {selectedReport.image_url && (
                   <div className="space-y-1">

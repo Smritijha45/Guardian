@@ -197,7 +197,7 @@ export function Navbar() {
         isOpen={sosModalOpen}
         onClose={() => setSosModalOpen(false)}
         title="Immediate Campus Emergency Support"
-        description="If you are in immediate danger or witness an active emergency, contact Campus Dispatch or 911 immediately."
+        description="If you are in immediate danger or witness an active emergency, contact MMDU Security Dispatch (+91 1731-274475) or National Emergency (112) immediately."
       >
         <div className="space-y-4">
           <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3">
@@ -205,31 +205,31 @@ export function Navbar() {
             <div>
               <h4 className="text-sm font-bold text-rose-900">Immediate Life Safety Response</h4>
               <p className="text-xs text-rose-700 mt-1">
-                Dispatchers are available 24/7. Your location will be shared automatically when calling from campus devices.
+                MMDU Campus Security & ERSS operators are active 24/7 across Haryana.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <a
-              href="tel:911"
+              href="tel:112"
               className="flex items-center gap-3 p-4 bg-rose-600 text-white rounded-2xl hover:bg-rose-700 transition-colors shadow-md shadow-rose-600/20"
             >
               <PhoneCall className="w-6 h-6" />
               <div>
-                <div className="text-xs text-rose-100">Call Emergency</div>
-                <div className="text-lg font-bold">911 (Police / EMS)</div>
+                <div className="text-xs text-rose-100">National Emergency</div>
+                <div className="text-lg font-bold">112 (Police / EMS)</div>
               </div>
             </a>
 
             <a
-              href="tel:5559110000"
+              href="tel:+911731274475"
               className="flex items-center gap-3 p-4 bg-brand-600 text-white rounded-2xl hover:bg-brand-700 transition-colors shadow-md shadow-brand-600/20"
             >
               <Shield className="w-6 h-6" />
               <div>
-                <div className="text-xs text-brand-100">Campus Dispatch 24/7</div>
-                <div className="text-lg font-bold">(555) 911-0000</div>
+                <div className="text-xs text-brand-100">MMDU Dispatch 24/7</div>
+                <div className="text-lg font-bold">+91 1731-274475</div>
               </div>
             </a>
           </div>

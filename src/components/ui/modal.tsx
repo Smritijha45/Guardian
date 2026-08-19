@@ -49,26 +49,26 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/30 backdrop-blur-xs transition-opacity duration-200"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
       <div
         className={cn(
-          'relative w-full bg-white rounded-3xl shadow-soft-lg border border-slate-200/90 z-10 overflow-hidden transform-gpu transition-all duration-200 animate-in fade-in zoom-in-95',
+          'relative w-full bg-white rounded-2xl sm:rounded-3xl shadow-soft-lg border border-slate-200/80 z-10 overflow-hidden transform-gpu transition-all duration-200 animate-in fade-in zoom-in-95',
           maxWidthClasses[maxWidth]
         )}
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-              {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
+          <div className="flex items-start justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-100">
+            <div className="pr-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 leading-snug">{title}</h3>
+              {description && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{description}</p>}
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -82,7 +82,7 @@ export function Modal({
             <X className="w-5 h-5" />
           </button>
         )}
-        <div className="p-6">{children}</div>
+        <div className="px-5 py-4 sm:px-6 sm:py-6 max-h-[75vh] overflow-y-auto">{children}</div>
       </div>
     </div>
   );

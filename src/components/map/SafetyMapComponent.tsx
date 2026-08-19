@@ -44,7 +44,7 @@ export default function SafetyMapComponent({
   }
 
   // Dynamic import of react-leaflet components on client
-  const { MapContainer, TileLayer, Marker, Popup, useMapEvents } = require('react-leaflet');
+  const { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } = require('react-leaflet');
   const L = require('leaflet');
 
   // Fix default icon issue
@@ -118,6 +118,19 @@ export default function SafetyMapComponent({
     return <Marker position={[pickedLocation.lat, pickedLocation.lng]} icon={pinIcon} />;
   };
 
+  const MapViewUpdater = () => {
+    const map = useMap();
+    useEffect(() => {
+      if (selectedReportId) {
+        const found = reports.find((r) => r.id === selectedReportId);
+        if (found) {
+          map.flyTo([found.latitude, found.longitude], 17, { animate: true });
+        }
+      }
+    }, [map]);
+    return null;
+  };
+
   return (
     <div style={{ height }} className="w-full relative rounded-3xl overflow-hidden shadow-soft-md border border-slate-200 z-0">
       <MapContainer
@@ -126,11 +139,13 @@ export default function SafetyMapComponent({
         scrollWheelZoom={true}
         style={{ height: '100%', width: '100%' }}
       >
-        {/* CartoDB Positron Light Theme Tiles (Clean & Aesthetic) */}
+        {/* CartoDB Positron Light Theme Tiles */}
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
+
+        <MapViewUpdater />
 
         {interactiveSelect && <LocationPickerMarker />}
 
@@ -163,6 +178,14 @@ export default function SafetyMapComponent({
                 </div>
                 <h4 className="font-bold text-sm text-slate-900 leading-tight">{report.title}</h4>
                 <p className="text-xs text-slate-500 mt-1 line-clamp-2">{report.description}</p>
+
+                {report.ai_risk_reason && (
+                  <div className="mt-2 p-2 bg-brand-50/80 rounded-xl border border-brand-200/60 text-[11px] text-brand-900">
+                    <span className="font-bold text-brand-700">AI Intelligence: </span>
+                    {report.ai_risk_reason}
+                  </div>
+                )}
+
                 <div className="mt-2 text-[11px] font-medium text-slate-600 border-t border-slate-100 pt-1.5">
                   📍 {report.location_name}
                 </div>

@@ -8,7 +8,7 @@ import { useSafety } from '@/lib/store';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, SeverityBadge, CategoryBadge } from '@/components/ui/badge';
-import { PlusCircle, Map, AlertTriangle, ShieldCheck, Clock, Lightbulb, ShieldAlert, ArrowRight, User } from 'lucide-react';
+import { PlusCircle, Map, AlertTriangle, ShieldCheck, Clock, Lightbulb, ShieldAlert, ArrowRight, User, X } from 'lucide-react';
 
 const DynamicSafetyMap = dynamic(() => import('@/components/map/SafetyMapComponent'), {
   ssr: false,
@@ -16,12 +16,15 @@ const DynamicSafetyMap = dynamic(() => import('@/components/map/SafetyMapCompone
 });
 
 export default function StudentDashboard() {
-  const { reports, alerts, currentUser, currentRole } = useSafety();
+  const { reports, alerts, proactiveAlerts, dismissedAlertIds, dismissAlert, currentUser } = useSafety();
 
   const totalReports = reports.length;
   const activeReports = reports.filter((r) => r.status !== 'resolved');
   const resolvedReports = reports.filter((r) => r.status === 'resolved');
   const myReports = reports.filter((r) => r.user_id === currentUser.id);
+
+  // Active non-dismissed proactive hotspot alerts
+  const visibleProactiveAlerts = proactiveAlerts.filter((a) => !dismissedAlertIds.includes(a.id));
 
   const quickCategories = [
     { title: 'Broken Lighting', category: 'lighting', icon: Lightbulb, color: 'text-amber-600 bg-amber-50 border-amber-200' },
@@ -42,7 +45,7 @@ export default function StudentDashboard() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-                  Student Safety Portal
+                  Student Safety Portal &bull; Haryana, India
                 </span>
                 {currentUser.department && <span className="text-xs text-slate-400">&bull; {currentUser.department}</span>}
               </div>
@@ -50,7 +53,7 @@ export default function StudentDashboard() {
                 Welcome back, {currentUser.full_name || currentUser.name}
               </h1>
               <p className="text-sm text-slate-500">
-                Here is the live safety overview for your campus community today.
+                Here is the real-time AI safety intelligence for MM(DU) Mullana campus today.
               </p>
             </div>
 
@@ -63,6 +66,53 @@ export default function StudentDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Phase 3: Proactive Safety Alert Cards (Hotspots >= 80) */}
+        {visibleProactiveAlerts.length > 0 && (
+          <div className="space-y-4">
+            {visibleProactiveAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="bg-amber-50/90 border-2 border-amber-300 rounded-3xl p-6 shadow-soft-md relative space-y-3 transition-all"
+              >
+                <button
+                  onClick={() => dismissAlert(alert.id)}
+                  className="absolute top-4 right-4 p-1.5 rounded-full bg-white/80 hover:bg-white text-slate-500 hover:text-slate-900 transition-colors shadow-xs"
+                  title="Dismiss alert banner on dashboard (Remains visible on Safety Map)"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center gap-2 text-rose-700 font-extrabold text-xs uppercase tracking-wider">
+                  <AlertTriangle className="w-5 h-5 text-rose-600 animate-pulse" />
+                  <span>HIGH-RISK AREA ALERT</span>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {alert.location} &bull; <span className="text-rose-600">Risk {alert.riskScore}/100</span>
+                  </h3>
+                  <p className="text-xs font-semibold text-slate-700 mt-1">
+                    {alert.incidentCount} related incidents detected. {alert.timePattern}
+                  </p>
+                </div>
+
+                <div className="p-3 bg-white/90 rounded-2xl border border-amber-200/80 text-xs space-y-1">
+                  <div className="text-slate-800 font-bold">Why Risky:</div>
+                  <p className="text-slate-600 leading-relaxed">{alert.whyRisky}</p>
+                </div>
+
+                <div className="p-3 bg-brand-600 text-white rounded-2xl text-xs space-y-1 shadow-xs">
+                  <div className="font-bold flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-brand-200" />
+                    Recommended Action:
+                  </div>
+                  <p className="text-brand-50 leading-relaxed">{alert.recommendedAction}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Dashboard Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -93,7 +143,7 @@ export default function StudentDashboard() {
           <Card hoverEffect>
             <CardContent className="p-5 space-y-1">
               <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Advisories</div>
-              <div className="text-2xl font-bold text-rose-600">{alerts.length}</div>
+              <div className="text-2xl font-bold text-rose-600">{alerts.length + visibleProactiveAlerts.length}</div>
               <p className="text-[11px] text-slate-400">Safety broadcasts</p>
             </CardContent>
           </Card>

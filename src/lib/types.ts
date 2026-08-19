@@ -9,7 +9,7 @@ export type ReportCategory =
 
 export type ReportSeverity = 'low' | 'medium' | 'high' | 'emergency';
 
-export type ReportStatus = 'reported' | 'under_review' | 'resolved';
+export type ReportStatus = 'reported' | 'under_review' | 'under_action' | 'resolved';
 
 export type UserRole = 'student' | 'admin';
 
@@ -41,6 +41,29 @@ export interface IncidentReport {
   is_anonymous?: boolean;
   user_name?: string;
   resolution_notes?: string;
+
+  // Phase 3 Response Workflow
+  assigned_action?: string;
+  action_note?: string;
+
+  // AI Safety Intelligence
+  ai_severity?: 'low' | 'medium' | 'high';
+  ai_category?: string;
+  ai_risk_reason?: string;
+}
+
+export interface ProactiveHotspotAlert {
+  id: string;
+  location: string;
+  riskScore: number;
+  incidentCount: number;
+  mainIssue: string;
+  whyRisky: string;
+  timePattern: string;
+  recommendedAction: string;
+  latitude: number;
+  longitude: number;
+  created_at: string;
 }
 
 export interface SafetyAlert {

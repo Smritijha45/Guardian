@@ -66,11 +66,11 @@ export function Sidebar() {
             Walking alone at night? Request a free security walking escort on campus anytime.
           </p>
           <a
-            href="tel:5559110000"
+            href="tel:+911731274475"
             className="flex items-center justify-center gap-2 py-2 px-3 bg-white text-slate-800 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs hover:bg-slate-50 transition-colors"
           >
             <PhoneCall className="w-3.5 h-3.5 text-brand-600" />
-            Call (555) 911-0000
+            Call +91 1731-274475
           </a>
         </div>
       </div>

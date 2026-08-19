@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge, StatusBadge, SeverityBadge } from '@/components/ui/badge';
 
 export default function LandingPage() {
-  const { reports, alerts } = useSafety();
+  const { reports, alerts, proactiveAlerts } = useSafety();
 
   const resolvedCount = reports.filter((r) => r.status === 'resolved').length;
   const activeCount = reports.filter((r) => r.status !== 'resolved').length;
@@ -25,7 +25,7 @@ export default function LandingPage() {
           <div className="md:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100/80 text-brand-700 text-xs font-semibold border border-brand-200 shadow-2xs">
               <Shield className="w-4 h-4 text-brand-600" />
-              Official Campus Safety & Incident Platform
+              Official MMDU Campus Safety & Incident Platform &bull; Haryana, India
             </div>
 
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
@@ -33,7 +33,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-              Report campus hazards, track unlit pathways, notify security of suspicious activity, and view real-time incident resolution—all with complete identity protection option.
+              Report campus hazards, track unlit pathways, view AI-driven proactive hotspot advisories, and track real-time incident resolution at Maharishi Markandeshwar University.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 justify-center md:justify-start">
@@ -69,7 +69,7 @@ export default function LandingPage() {
                   <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
                   <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Live Campus Feed</span>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">Real-time</span>
+                <span className="text-xs text-slate-400 font-mono">MMDU Mullana</span>
               </div>
 
               <div className="space-y-3">
@@ -135,6 +135,45 @@ export default function LandingPage() {
           </CardContent>
         </Card>
       </section>
+
+      {/* PROACTIVE HOTSPOT SAFETY ALERTS (RISK 80+) */}
+      {proactiveAlerts.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
+              <h2 className="text-xl font-bold text-slate-900">Proactive High-Risk Hotspot Alerts</h2>
+            </div>
+            <span className="text-xs text-slate-500">AI-detected from active incident clusters</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {proactiveAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="p-5 rounded-2xl border-2 border-amber-300 bg-amber-50 text-slate-900 space-y-2 text-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-600 text-white">
+                    ⚠️ HIGH-RISK AREA
+                  </span>
+                  <span className="text-xs font-bold text-rose-700">Risk {alert.riskScore}/100</span>
+                </div>
+                <h3 className="font-bold text-base text-slate-900">{alert.location}</h3>
+                <p className="text-xs font-semibold text-slate-700">
+                  {alert.incidentCount} related incidents detected. {alert.timePattern}
+                </p>
+                <div className="p-2.5 bg-white/90 rounded-xl border border-amber-200">
+                  <strong>Why Risky: </strong>{alert.whyRisky}
+                </div>
+                <div className="p-2.5 bg-brand-600 text-white rounded-xl font-medium">
+                  <strong>Recommended: </strong>{alert.recommendedAction}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* CAMPUS ADVISORIES & ALERTS */}
       {alerts.length > 0 && (
@@ -238,11 +277,11 @@ export default function LandingPage() {
           </p>
         </div>
         <a
-          href="tel:5559110000"
+          href="tel:+911731274475"
           className="px-6 py-3 bg-white text-slate-900 hover:bg-slate-100 font-bold rounded-2xl text-sm transition-colors shrink-0 flex items-center gap-2"
         >
           <PhoneCall className="w-4 h-4 text-brand-600" />
-          Call (555) 911-0000
+          Call +91 1731-274475
         </a>
       </section>
 

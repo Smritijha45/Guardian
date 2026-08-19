@@ -29,16 +29,16 @@ export function Footer() {
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Emergency Hotlines</h4>
             <ul className="space-y-2 text-xs text-slate-600">
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-rose-600">Campus Dispatch:</span> (555) 911-0000
+                <span className="font-semibold text-rose-600">MMDU Dispatch:</span> +91 1731-274475
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-slate-800">City Police / EMS:</span> 911
+                <span className="font-semibold text-slate-800">National Emergency:</span> 112 (or 100)
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-brand-600">Night Escort Service:</span> (555) 234-SAFE
+                <span className="font-semibold text-brand-600">Night Escort:</span> +91 1731-274476
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-slate-800">Health Center:</span> (555) 345-CARE
+                <span className="font-semibold text-slate-800">MMIMSR Hospital:</span> +91 1731-274477
               </li>
             </ul>
           </div>

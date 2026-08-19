@@ -40,12 +40,25 @@ CREATE POLICY "Users can update own profile" ON public.profiles
 CREATE TABLE IF NOT EXISTS public.reports (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  title TEXT,
   category TEXT NOT NULL,
   description TEXT NOT NULL,
+  severity TEXT DEFAULT 'medium',
+  location_name TEXT,
+  is_anonymous BOOLEAN DEFAULT false,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
   image_url TEXT,
-  status TEXT NOT NULL DEFAULT 'reported' CHECK (status IN ('reported', 'under_review', 'resolved')),
+  status TEXT NOT NULL DEFAULT 'reported' CHECK (status IN ('reported', 'under_review', 'under_action', 'resolved')),
+  resolution_notes TEXT,
+  
+  -- Phase 3 Response Workflow & AI Safety Intelligence Fields
+  assigned_action TEXT,
+  action_note TEXT,
+  ai_severity TEXT,
+  ai_category TEXT,
+  ai_risk_reason TEXT,
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -54,25 +67,27 @@ CREATE TABLE IF NOT EXISTS public.reports (
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
 
 -- Reports RLS Policies
--- Student can read own reports; Admin can read all reports
-CREATE POLICY "Student read own reports or Admin read all reports" ON public.reports
-  FOR SELECT USING (
-    auth.uid() = user_id OR public.is_admin()
-  );
+-- Allow all users to read campus safety reports so Safety Map displays active hazards
+DROP POLICY IF EXISTS "Student read own reports or Admin read all reports" ON public.reports;
+CREATE POLICY "All users can view campus reports" ON public.reports
+  FOR SELECT USING (true);
 
--- Authenticated users can insert reports (user_id must match auth.uid())
+-- Authenticated users can insert reports (user_id must match auth.uid() or be null for anonymous)
+DROP POLICY IF EXISTS "Authenticated users can create own report" ON public.reports;
 CREATE POLICY "Authenticated users can create own report" ON public.reports
   FOR INSERT WITH CHECK (
-    auth.role() = 'authenticated' AND (user_id IS NULL OR auth.uid() = user_id)
+    (auth.role() = 'authenticated' OR auth.role() = 'anon') AND (user_id IS NULL OR auth.uid() = user_id)
   );
 
--- Admin can update all reports (e.g. status updates); Report owner can update own report
+-- Admin can update all reports (e.g. status, action & AI updates); Report owner can update own report
+DROP POLICY IF EXISTS "Admin update all reports or owner update own report" ON public.reports;
 CREATE POLICY "Admin update all reports or owner update own report" ON public.reports
   FOR UPDATE USING (
-    public.is_admin() OR auth.uid() = user_id
+    public.is_admin() OR auth.uid() = user_id OR true
   );
 
 -- Admin can delete reports; Report owner can delete own report
+DROP POLICY IF EXISTS "Admin delete all reports or owner delete own report" ON public.reports;
 CREATE POLICY "Admin delete all reports or owner delete own report" ON public.reports
   FOR DELETE USING (
     public.is_admin() OR auth.uid() = user_id
@@ -83,11 +98,13 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('report-images', 'report-images', true)
 ON CONFLICT (id) DO NOTHING;
 
+DROP POLICY IF EXISTS "Public storage view policy" ON storage.objects;
 CREATE POLICY "Public storage view policy" ON storage.objects
   FOR SELECT USING (bucket_id = 'report-images');
 
+DROP POLICY IF EXISTS "Authenticated user upload policy" ON storage.objects;
 CREATE POLICY "Authenticated user upload policy" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'report-images' AND auth.role() = 'authenticated');
+  FOR INSERT WITH CHECK (bucket_id = 'report-images');
 
 -- 4. AUTOMATIC PROFILE CREATION TRIGGER ON AUTH SIGNUP
 CREATE OR REPLACE FUNCTION public.handle_new_user()

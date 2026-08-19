@@ -10,10 +10,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, SeverityBadge, CategoryBadge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
-import { ShieldCheck, MapPin, Edit3, Trash2, Search, ShieldAlert, Eye, Calendar, User, Camera } from 'lucide-react';
+import { ShieldCheck, MapPin, Edit3, Trash2, Search, ShieldAlert, Eye, Calendar, User, Camera, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const { reports, updateReportStatus, deleteReport, currentRole, setRole } = useSafety();
+  const { reports, updateReportStatus, deleteReport, currentRole, setRole, proactiveAlerts } = useSafety();
   const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +21,9 @@ export default function AdminDashboardPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [editingReport, setEditingReport] = useState<IncidentReport | null>(null);
   const [resolutionNoteInput, setResolutionNoteInput] = useState('');
-  const [newStatusSelect, setNewStatusSelect] = useState<ReportStatus>('under_review');
+  const [assignedActionInput, setAssignedActionInput] = useState('');
+  const [actionNoteInput, setActionNoteInput] = useState('');
+  const [newStatusSelect, setNewStatusSelect] = useState<ReportStatus>('under_action');
   const [isSaving, setIsSaving] = useState(false);
 
   // Access Control Guard: Only admins can access this page
@@ -45,10 +47,10 @@ export default function AdminDashboardPage() {
     );
   }
 
-  // Simple counts required for Admin Dashboard: Total / Reported / Under Review / Resolved
+  // Dashboard metric counts
   const totalCount = reports.length;
   const reportedCount = reports.filter((r) => r.status === 'reported').length;
-  const underReviewCount = reports.filter((r) => r.status === 'under_review').length;
+  const underActionCount = reports.filter((r) => r.status === 'under_action' || r.status === 'under_review').length;
   const resolvedCount = reports.filter((r) => r.status === 'resolved').length;
 
   const filteredReports = reports.filter((r) => {
@@ -68,16 +70,26 @@ export default function AdminDashboardPage() {
     setEditingReport(report);
     setNewStatusSelect(report.status);
     setResolutionNoteInput(report.resolution_notes || '');
+    setAssignedActionInput(report.assigned_action || 'Increase lighting and security patrols.');
+    setActionNoteInput(report.action_note || 'Security team notified. Patrol increased from 8 PM–11 PM.');
   };
 
-  const handleSaveStatusChange = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveStatusChange = async (e?: React.FormEvent, overrideStatus?: ReportStatus) => {
+    if (e) e.preventDefault();
     if (!editingReport) return;
+
+    const targetStatus = overrideStatus || newStatusSelect;
 
     setIsSaving(true);
     try {
-      await updateReportStatus(editingReport.id, newStatusSelect, resolutionNoteInput);
-      showToast('Status Updated', `Report set to ${newStatusSelect.replace('_', ' ')} (saved to Supabase)`, 'success');
+      await updateReportStatus(
+        editingReport.id,
+        targetStatus,
+        resolutionNoteInput,
+        assignedActionInput,
+        actionNoteInput
+      );
+      showToast('Action Saved to Supabase', `Incident marked as ${targetStatus.replace('_', ' ').toUpperCase()}`, 'success');
       setEditingReport(null);
     } catch (err: any) {
       showToast('Update Failed', err?.message || 'Could not update status in Supabase.', 'error');
@@ -103,13 +115,13 @@ export default function AdminDashboardPage() {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-semibold border border-brand-500/30">
                 <ShieldCheck className="w-4 h-4 text-brand-400" />
-                Public Safety Console
+                Public Safety Response Console &bull; MMDU Mullana, Haryana
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-2">
-                Campus Admin Dashboard
+                Campus Admin Response Console
               </h1>
               <p className="text-xs text-slate-300 mt-1">
-                Real-time Supabase incident management, status transitions, and resolution tracking.
+                Real-time Supabase response workflow: assign actions, log admin action notes, mark as UNDER ACTION and RESOLVED.
               </p>
             </div>
 
@@ -121,7 +133,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Simple Metric Counts: Total / Reported / Under Review / Resolved */}
+        {/* Metric Counts */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card hoverEffect>
             <CardContent className="p-5 space-y-1">
@@ -141,9 +153,9 @@ export default function AdminDashboardPage() {
 
           <Card hoverEffect>
             <CardContent className="p-5 space-y-1">
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Under Review</div>
-              <div className="text-2xl font-bold text-amber-600">{underReviewCount}</div>
-              <p className="text-[11px] text-slate-400">Actively being handled</p>
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Under Action</div>
+              <div className="text-2xl font-bold text-amber-600">{underActionCount}</div>
+              <p className="text-[11px] text-slate-400">Being addressed</p>
             </CardContent>
           </Card>
 
@@ -160,8 +172,8 @@ export default function AdminDashboardPage() {
         <Card>
           <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100">
             <div>
-              <CardTitle>Supabase Incidents Queue</CardTitle>
-              <p className="text-xs text-slate-500 mt-0.5">View and update incident status in real time.</p>
+              <CardTitle>Supabase Incidents & Response Queue</CardTitle>
+              <p className="text-xs text-slate-500 mt-0.5">Assign actions and update status to UNDER ACTION or RESOLVED in real time.</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -201,6 +213,7 @@ export default function AdminDashboardPage() {
                 <option value="all">All Statuses</option>
                 <option value="reported">Reported</option>
                 <option value="under_review">Under Review</option>
+                <option value="under_action">Under Action</option>
                 <option value="resolved">Resolved</option>
               </select>
             </div>
@@ -218,7 +231,7 @@ export default function AdminDashboardPage() {
                     <th className="p-4">Ref ID</th>
                     <th className="p-4">Category & Details</th>
                     <th className="p-4">Location</th>
-                    <th className="p-4">Status</th>
+                    <th className="p-4">Status & Admin Action</th>
                     <th className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -229,14 +242,30 @@ export default function AdminDashboardPage() {
                       <td className="p-4 space-y-1">
                         <div className="flex items-center gap-2">
                           <CategoryBadge category={(report.category as ReportCategory) || 'other'} />
+                          {report.ai_severity && (
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                              report.ai_severity === 'high'
+                                ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                : report.ai_severity === 'medium'
+                                ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                : 'bg-slate-100 text-slate-700 border border-slate-200'
+                            }`}>
+                              AI: {report.ai_severity}
+                            </span>
+                          )}
                         </div>
                         <div className="text-[11px] text-slate-600 line-clamp-2 max-w-sm">{report.description}</div>
                       </td>
                       <td className="p-4 text-slate-600">
                         📍 {report.location_name || `Lat: ${report.latitude.toFixed(3)}, Lng: ${report.longitude.toFixed(3)}`}
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 space-y-1">
                         <StatusBadge status={report.status} />
+                        {report.action_note && (
+                          <div className="text-[10px] text-amber-900 bg-amber-50 p-1.5 rounded-lg border border-amber-200 line-clamp-2 max-w-xs">
+                            <strong>Action:</strong> {report.action_note}
+                          </div>
+                        )}
                       </td>
                       <td className="p-4 text-right space-x-2">
                         <Button
@@ -245,7 +274,7 @@ export default function AdminDashboardPage() {
                           icon={<Edit3 className="w-3.5 h-3.5" />}
                           onClick={() => handleOpenEditModal(report)}
                         >
-                          Details & Status
+                          Respond & Action
                         </Button>
                         <Button
                           size="sm"
@@ -266,12 +295,12 @@ export default function AdminDashboardPage() {
 
       </main>
 
-      {/* Edit Status, View Photo & Location Modal */}
+      {/* Edit Status & Assign Response Action Modal */}
       {editingReport && (
         <Modal
           isOpen={!!editingReport}
           onClose={() => setEditingReport(null)}
-          title={`Report Details — ${editingReport.id}`}
+          title={`Response Workflow — ${editingReport.id}`}
         >
           <div className="space-y-4 py-1">
             
@@ -298,6 +327,32 @@ export default function AdminDashboardPage() {
               </p>
             </div>
 
+            {/* AI Safety Intelligence Analysis */}
+            <div className="p-4 bg-brand-50/70 border border-brand-200/80 rounded-2xl space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-brand-900">
+                  <ShieldCheck className="w-4 h-4 text-brand-600" />
+                  AI Risk Intelligence
+                </div>
+                {editingReport.ai_severity && (
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                    editingReport.ai_severity === 'high'
+                      ? 'bg-rose-600 text-white'
+                      : editingReport.ai_severity === 'medium'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-emerald-600 text-white'
+                  }`}>
+                    {editingReport.ai_severity} Severity
+                  </span>
+                )}
+              </div>
+              
+              <div className="text-slate-700 bg-white/80 p-2.5 rounded-xl border border-brand-200/60 leading-relaxed text-[11px]">
+                <strong className="text-brand-900">Recommended Action: </strong>
+                {editingReport.ai_risk_reason || 'Increase lighting and security patrols near area pathways.'}
+              </div>
+            </div>
+
             {/* Photo Attachment if available */}
             {editingReport.image_url && (
               <div className="space-y-1">
@@ -305,50 +360,92 @@ export default function AdminDashboardPage() {
                   <Camera className="w-3.5 h-3.5 text-slate-400" />
                   Attached Photo Evidence
                 </label>
-                <div className="rounded-xl overflow-hidden border border-slate-200 max-h-56">
+                <div className="rounded-xl overflow-hidden border border-slate-200 max-h-48">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={editingReport.image_url} alt="Photo attachment" className="w-full h-full object-cover" />
                 </div>
               </div>
             )}
 
-            {/* Change Status Form */}
-            <form onSubmit={handleSaveStatusChange} className="space-y-4 pt-2 border-t border-slate-100">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Update Status (Persists to Supabase)
-                </label>
+            {/* Phase 3 Admin Action Response Form */}
+            <form onSubmit={(e) => handleSaveStatusChange(e)} className="space-y-4 pt-3 border-t border-slate-200">
+              <div className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-brand-600" />
+                Admin Action Response (Saved to Supabase)
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Assign Action</label>
                 <select
-                  value={newStatusSelect}
-                  onChange={(e) => setNewStatusSelect(e.target.value as ReportStatus)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none text-sm bg-white font-medium"
+                  value={assignedActionInput}
+                  onChange={(e) => setAssignedActionInput(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-medium"
                 >
-                  <option value="reported">reported (Newly Filed)</option>
-                  <option value="under_review">under_review (In Progress)</option>
-                  <option value="resolved">resolved (Closed)</option>
+                  <option value="Increase lighting and security patrols.">Increase lighting and security patrols.</option>
+                  <option value="Deploy campus security escort patrol.">Deploy campus security escort patrol.</option>
+                  <option value="Dispatch electrical & facilities repair.">Dispatch electrical & facilities repair.</option>
+                  <option value="Cordon off physical hazard area.">Cordon off physical hazard area.</option>
+                  <option value="Review CCTV surveillance footage.">Review CCTV surveillance footage.</option>
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Official Resolution Log Notes
-                </label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Admin Action Note</label>
                 <textarea
-                  rows={3}
-                  placeholder="Log security dispatch actions or resolution details..."
-                  value={resolutionNoteInput}
-                  onChange={(e) => setResolutionNoteInput(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none text-xs bg-white"
+                  rows={2}
+                  placeholder='e.g., "Security team notified. Patrol increased from 8 PM–11 PM."'
+                  value={actionNoteInput}
+                  onChange={(e) => setActionNoteInput(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-800"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <Button type="button" variant="outline" onClick={() => setEditingReport(null)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Saving to Supabase...' : 'Save & Update Status'}
-                </Button>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Status Transition</label>
+                <select
+                  value={newStatusSelect}
+                  onChange={(e) => setNewStatusSelect(e.target.value as ReportStatus)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white font-semibold"
+                >
+                  <option value="reported">reported (Newly Filed)</option>
+                  <option value="under_review">under_review (Reviewing)</option>
+                  <option value="under_action">under_action (Being Addressed / Under Action)</option>
+                  <option value="resolved">resolved (Closed & Resolved)</option>
+                </select>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="soft-blue"
+                    size="sm"
+                    onClick={() => handleSaveStatusChange(undefined, 'under_action')}
+                    disabled={isSaving}
+                    className="bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 font-bold"
+                  >
+                    Mark UNDER ACTION
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="soft-blue"
+                    size="sm"
+                    onClick={() => handleSaveStatusChange(undefined, 'resolved')}
+                    disabled={isSaving}
+                    className="bg-emerald-600 text-white hover:bg-emerald-700 font-bold"
+                  >
+                    Mark RESOLVED
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setEditingReport(null)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" size="sm" disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Response'}
+                  </Button>
+                </div>
               </div>
             </form>
 

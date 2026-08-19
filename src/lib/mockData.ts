@@ -42,8 +42,8 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
 export const INITIAL_ALERTS: SafetyAlert[] = [
   {
     id: 'alt_1',
-    title: 'Advisory: Monsoon Fog & Fogging Notice (MMDU Mullana)',
-    message: 'Poor visibility expected on MMDU campus pathways after dusk. Campus security patrols operate 24/7.',
+    title: 'Advisory: Fog & Dusk Visibility Notice (MMDU Mullana)',
+    message: 'Reduced visibility on MMDU campus pathways after dusk. 24/7 security escorts available (+91 1731-274475).',
     level: 'warning',
     location_scope: 'MMDU Campus-Wide, Mullana, Haryana',
     is_active: true,
@@ -51,7 +51,7 @@ export const INITIAL_ALERTS: SafetyAlert[] = [
   },
   {
     id: 'alt_2',
-    title: 'Maintenance Alert: MMEC Block Walkway Lighting Repair',
+    title: 'Maintenance Alert: MMEC Pathway Lighting Repair',
     message: 'Facilities repair underway near MMEC Engineering Block pathway, Mullana, Haryana. Temporary lighting installed.',
     level: 'info',
     location_scope: 'MMEC Pathway, Mullana, Haryana',
@@ -60,4 +60,41 @@ export const INITIAL_ALERTS: SafetyAlert[] = [
   },
 ];
 
-export const INITIAL_REPORTS: IncidentReport[] = [];
+export const INITIAL_REPORTS: IncidentReport[] = [
+  {
+    id: 'REP-2026-101',
+    user_id: 'usr_student_01',
+    title: 'Unlit Walkway Light near MMDU Central Library',
+    category: 'lighting',
+    description: 'The street lamps along the north pathway leading from MMDU Central Library to Hostel Block are completely dark after 7 PM.',
+    latitude: 30.2525,
+    longitude: 77.0470,
+    location_name: 'MMDU Central Library, Mullana, Haryana',
+    severity: 'medium',
+    status: 'under_review',
+    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 1).toISOString(),
+    is_anonymous: false,
+    ai_severity: 'medium',
+    ai_category: 'Lighting Infrastructure',
+    ai_risk_reason: 'Poor nocturnal lighting near student library route poses slip hazard and reduces surveillance visibility. Facilities dispatch recommended.',
+  },
+  {
+    id: 'REP-2026-102',
+    user_id: null,
+    title: 'Exposed Electrical Wiring near MMEC Engineering Gate',
+    category: 'hazard',
+    description: 'Exposed wire conduit sticking out of ground near MMEC Engineering Block entrance steps, Mullana, Haryana.',
+    latitude: 30.2518,
+    longitude: 77.0480,
+    location_name: 'MMEC Engineering Block, MMDU, Mullana, Haryana',
+    severity: 'high',
+    status: 'reported',
+    created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 12).toISOString(),
+    is_anonymous: true,
+    ai_severity: 'high',
+    ai_category: 'Physical Hazard',
+    ai_risk_reason: 'Exposed high-voltage electrical hazard in high-foot-traffic student zone. Priority cordoning and emergency electrical repair required.',
+  },
+];

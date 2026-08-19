@@ -1,13 +1,17 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { IncidentReport, SafetyAlert, UserProfile, UserRole, ReportStatus, ReportCategory } from './types';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { IncidentReport, SafetyAlert, UserProfile, UserRole, ReportStatus, ReportCategory, ReportSeverity, ProactiveHotspotAlert } from './types';
 import { INITIAL_REPORTS, INITIAL_ALERTS, MOCK_USER, MOCK_ADMIN } from './mockData';
 import { createClient } from './supabase/client';
+import { analyzeHotspots } from './hotspotAnalyzer';
 
 interface SafetyContextType {
   reports: IncidentReport[];
   alerts: SafetyAlert[];
+  proactiveAlerts: ProactiveHotspotAlert[];
+  dismissedAlertIds: string[];
+  dismissAlert: (alertId: string) => void;
   currentUser: UserProfile;
   currentRole: UserRole;
   setRole: (role: UserRole) => void;
@@ -26,7 +30,13 @@ interface SafetyContextType {
     location_name?: string;
     is_anonymous?: boolean;
   }) => Promise<IncidentReport | null>;
-  updateReportStatus: (reportId: string, status: ReportStatus, resolutionNotes?: string) => Promise<void>;
+  updateReportStatus: (
+    reportId: string,
+    status: ReportStatus,
+    resolutionNotes?: string,
+    assignedAction?: string,
+    actionNote?: string
+  ) => Promise<void>;
   deleteReport: (reportId: string) => Promise<void>;
   activeAlertCount: number;
   isLoading: boolean;
@@ -38,12 +48,22 @@ const SafetyContext = createContext<SafetyContextType | undefined>(undefined);
 export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const supabase = createClient();
 
-  const [reports, setReports] = useState<IncidentReport[]>([]);
+  const [reports, setReports] = useState<IncidentReport[]>(INITIAL_REPORTS);
   const [alerts] = useState<SafetyAlert[]>(INITIAL_ALERTS);
+  const [dismissedAlertIds, setDismissedAlertIds] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<UserProfile>(MOCK_USER);
   const [currentRole, setCurrentRole] = useState<UserRole>('student');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  // Compute dynamic proactive hotspot alerts from real Supabase report data
+  const proactiveAlerts = useMemo(() => {
+    return analyzeHotspots(reports);
+  }, [reports]);
+
+  const dismissAlert = (alertId: string) => {
+    setDismissedAlertIds((prev) => [...prev, alertId]);
+  };
 
   // Helper function to fetch profile and reports from Supabase
   const refreshData = useCallback(async () => {
@@ -89,13 +109,13 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCurrentRole('student');
       }
 
-      // Fetch reports from Supabase (RLS applies automatically)
+      // Fetch reports from Supabase
       const { data: reportsData, error: reportsError } = await supabase
         .from('reports')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (reportsData && !reportsError) {
+      if (reportsData && !reportsError && reportsData.length > 0) {
         const mappedReports: IncidentReport[] = reportsData.map((r: any) => ({
           id: r.id,
           user_id: r.user_id,
@@ -107,13 +127,20 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           status: r.status as ReportStatus,
           created_at: r.created_at,
           updated_at: r.updated_at,
-          title: r.description.slice(0, 40) + (r.description.length > 40 ? '...' : ''),
-          location_name: `Lat: ${r.latitude.toFixed(3)}, Lng: ${r.longitude.toFixed(3)}`,
-          severity: 'medium',
+          title: r.title || (r.description.slice(0, 40) + (r.description.length > 40 ? '...' : '')),
+          location_name: r.location_name || `Lat: ${r.latitude.toFixed(3)}, Lng: ${r.longitude.toFixed(3)}`,
+          severity: (r.severity as ReportSeverity) || 'medium',
+          is_anonymous: r.is_anonymous || false,
+          resolution_notes: r.resolution_notes || undefined,
+          assigned_action: r.assigned_action || undefined,
+          action_note: r.action_note || undefined,
+          ai_severity: r.ai_severity || undefined,
+          ai_category: r.ai_category || undefined,
+          ai_risk_reason: r.ai_risk_reason || undefined,
         }));
         setReports(mappedReports);
       } else {
-        setReports([]);
+        setReports(INITIAL_REPORTS);
       }
     } catch (err) {
       console.warn('Error refreshing data from Supabase:', err);
@@ -180,7 +207,7 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsAuthenticated(false);
     setCurrentUser(MOCK_USER);
     setCurrentRole('student');
-    setReports([]);
+    setReports(INITIAL_REPORTS);
   };
 
   // Set Role manual override for simulator/testing UI
@@ -217,7 +244,7 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  // Add Report (inserts into Supabase database & uploads image to storage)
+  // Add Report
   const addReport = async (reportData: {
     description: string;
     category: string;
@@ -240,16 +267,54 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }
 
+      // Call AI Safety Intelligence Server API
+      let aiResult = {
+        ai_severity: 'medium' as 'low' | 'medium' | 'high',
+        ai_category: 'General Safety',
+        ai_risk_reason: 'Automated campus safety evaluation generated for dispatcher review.',
+      };
+
+      try {
+        const aiRes = await fetch('/api/ai/analyze-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: reportData.title,
+            description: reportData.description,
+            category: reportData.category,
+            location_name: reportData.location_name,
+          }),
+        });
+
+        if (aiRes.ok) {
+          const aiJson = await aiRes.json();
+          aiResult = {
+            ai_severity: aiJson.ai_severity || 'medium',
+            ai_category: aiJson.ai_category || reportData.category || 'General Safety',
+            ai_risk_reason: aiJson.ai_risk_reason || 'Report evaluated for campus response.',
+          };
+        }
+      } catch (aiErr) {
+        console.warn('AI analysis exception:', aiErr);
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
 
       const insertPayload = {
         user_id: user && !reportData.is_anonymous ? user.id : null,
+        title: reportData.title || reportData.description.slice(0, 40),
         category: reportData.category || 'hazard',
         description: reportData.description || reportData.title || '',
+        severity: reportData.severity || 'medium',
+        location_name: reportData.location_name || `Lat: ${reportData.latitude.toFixed(3)}, Lng: ${reportData.longitude.toFixed(3)}`,
+        is_anonymous: reportData.is_anonymous || false,
         latitude: reportData.latitude,
         longitude: reportData.longitude,
         image_url: finalImageUrl,
         status: 'reported',
+        ai_severity: aiResult.ai_severity,
+        ai_category: aiResult.ai_category,
+        ai_risk_reason: aiResult.ai_risk_reason,
       };
 
       if (user) {
@@ -273,17 +338,20 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             status: data.status as ReportStatus,
             created_at: data.created_at,
             updated_at: data.updated_at,
-            title: reportData.title || data.description.slice(0, 40),
-            location_name: reportData.location_name || `Lat: ${data.latitude.toFixed(3)}, Lng: ${data.longitude.toFixed(3)}`,
-            severity: reportData.severity || 'medium',
-            is_anonymous: reportData.is_anonymous,
+            title: data.title || reportData.title || data.description.slice(0, 40),
+            location_name: data.location_name || reportData.location_name || `Lat: ${data.latitude.toFixed(3)}, Lng: ${data.longitude.toFixed(3)}`,
+            severity: (data.severity as ReportSeverity) || reportData.severity || 'medium',
+            is_anonymous: data.is_anonymous,
+            ai_severity: data.ai_severity || aiResult.ai_severity,
+            ai_category: data.ai_category || aiResult.ai_category,
+            ai_risk_reason: data.ai_risk_reason || aiResult.ai_risk_reason,
           };
           setReports((prev) => [newRep, ...prev]);
           return newRep;
         }
       }
 
-      // Fallback local report if not authenticated
+      // Fallback local report
       const timestamp = new Date().toISOString();
       const fallbackRep: IncidentReport = {
         id: `REP-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
@@ -300,6 +368,9 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         location_name: reportData.location_name || 'Campus Location',
         severity: reportData.severity || 'medium',
         is_anonymous: reportData.is_anonymous,
+        ai_severity: aiResult.ai_severity,
+        ai_category: aiResult.ai_category,
+        ai_risk_reason: aiResult.ai_risk_reason,
       };
 
       setReports((prev) => [fallbackRep, ...prev]);
@@ -310,15 +381,32 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  // Update Report Status
-  const updateReportStatus = async (reportId: string, status: ReportStatus, resolutionNotes?: string) => {
+  // Update Report Status, Assigned Action & Action Notes
+  const updateReportStatus = async (
+    reportId: string,
+    status: ReportStatus,
+    resolutionNotes?: string,
+    assignedAction?: string,
+    actionNote?: string
+  ) => {
     try {
+      const updateData: any = {
+        status,
+        updated_at: new Date().toISOString(),
+      };
+      if (resolutionNotes !== undefined) {
+        updateData.resolution_notes = resolutionNotes;
+      }
+      if (assignedAction !== undefined) {
+        updateData.assigned_action = assignedAction;
+      }
+      if (actionNote !== undefined) {
+        updateData.action_note = actionNote;
+      }
+
       const { error } = await supabase
         .from('reports')
-        .update({
-          status,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', reportId);
 
       if (error) {
@@ -332,6 +420,8 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               ...rep,
               status,
               resolution_notes: resolutionNotes !== undefined ? resolutionNotes : rep.resolution_notes,
+              assigned_action: assignedAction !== undefined ? assignedAction : rep.assigned_action,
+              action_note: actionNote !== undefined ? actionNote : rep.action_note,
               updated_at: new Date().toISOString(),
             };
           }
@@ -353,13 +443,16 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const activeAlertCount = alerts.filter((a) => a.is_active).length;
+  const activeAlertCount = alerts.filter((a) => a.is_active).length + proactiveAlerts.length;
 
   return (
     <SafetyContext.Provider
       value={{
         reports,
         alerts,
+        proactiveAlerts,
+        dismissedAlertIds,
+        dismissAlert,
         currentUser,
         currentRole,
         setRole,

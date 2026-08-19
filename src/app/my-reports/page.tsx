@@ -180,6 +180,32 @@ export default function MyReportsPage() {
               <p className="text-slate-600 leading-relaxed">{selectedReport.description}</p>
             </div>
 
+            {/* AI Safety Intelligence */}
+            {selectedReport.ai_risk_reason && (
+              <div className="p-4 bg-brand-50/60 rounded-2xl border border-brand-200/70 space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="font-bold text-brand-900 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-brand-600" />
+                    AI Safety Risk Assessment
+                  </div>
+                  {selectedReport.ai_severity && (
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
+                      selectedReport.ai_severity === 'high'
+                        ? 'bg-rose-100 text-rose-800'
+                        : selectedReport.ai_severity === 'medium'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-emerald-100 text-emerald-800'
+                    }`}>
+                      AI Severity: {selectedReport.ai_severity}
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-700 leading-relaxed text-[11px] bg-white/70 p-2.5 rounded-xl border border-brand-100">
+                  {selectedReport.ai_risk_reason}
+                </p>
+              </div>
+            )}
+
             {/* Status Timeline */}
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Resolution Timeline</h4>
@@ -210,12 +236,36 @@ export default function MyReportsPage() {
                   </div>
                 </div>
 
-                {/* Step 3 */}
+                {/* Step 3: Under Action */}
+                <div className="relative flex items-start gap-3 pl-8">
+                  <div className={`absolute left-0 top-0.5 w-7 h-7 rounded-full ${
+                    selectedReport.status === 'under_action' || selectedReport.status === 'resolved'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-slate-200 text-slate-500'
+                  } flex items-center justify-center text-xs font-bold`}>
+                    {selectedReport.status === 'under_action' || selectedReport.status === 'resolved' ? '✓' : '3'}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">Under Action — Being Addressed</div>
+                    {selectedReport.assigned_action && (
+                      <div className="text-[11px] text-slate-600 mt-0.5">
+                        <strong>Action:</strong> {selectedReport.assigned_action}
+                      </div>
+                    )}
+                    {selectedReport.action_note && (
+                      <div className="text-xs text-amber-900 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mt-1">
+                        <strong>Admin Note:</strong> {selectedReport.action_note}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Step 4: Resolution Complete */}
                 <div className="relative flex items-start gap-3 pl-8">
                   <div className={`absolute left-0 top-0.5 w-7 h-7 rounded-full ${
                     selectedReport.status === 'resolved' ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-500'
                   } flex items-center justify-center text-xs font-bold`}>
-                    {selectedReport.status === 'resolved' ? '✓' : '3'}
+                    {selectedReport.status === 'resolved' ? '✓' : '4'}
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900">Resolution Complete</div>

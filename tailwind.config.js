@@ -1,11 +1,10 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -16,14 +15,14 @@ const config: Config = {
           200: '#BAE0FD',
           300: '#7CD0FC',
           400: '#38BDF8',
-          500: '#2563EB', // Soft Primary Blue
+          500: '#2563EB',
           600: '#1D4ED8',
           700: '#1E40AF',
           800: '#1E3A8A',
           900: '#172554',
         },
         surface: {
-          50: '#FAFAFC', // Off-white background
+          50: '#FAFAFC',
           100: '#F1F5F9',
           200: '#E2E8F0',
           300: '#CBD5E1',
@@ -54,7 +53,7 @@ const config: Config = {
           500: '#EF4444',
           600: '#DC2626',
           700: '#B91C1C',
-        }
+        },
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
@@ -67,9 +66,8 @@ const config: Config = {
       borderRadius: {
         '2xl': '1rem',
         '3xl': '1.5rem',
-      }
+      },
     },
   },
   plugins: [],
 };
-export default config;

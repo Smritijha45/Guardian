@@ -17,6 +17,7 @@ interface SafetyContextType {
   setRole: (role: UserRole) => void;
   signUp: (email: string, password: string, name: string, role?: UserRole) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   addReport: (newReport: {
     description: string;
@@ -198,6 +199,22 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!error) {
       await refreshData();
     }
+    return { error };
+  };
+
+  // Auth: Sign In with Google OAuth
+  const signInWithGoogle = async () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
     return { error };
   };
 
@@ -458,6 +475,7 @@ export const SafetyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setRole,
         signUp,
         signIn,
+        signInWithGoogle,
         signOut,
         addReport,
         updateReportStatus,

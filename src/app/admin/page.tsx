@@ -175,46 +175,48 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-slate-500 mt-0.5">Assign actions and update status to UNDER ACTION or RESOLVED in real time.</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto flex-1">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 <input
                   type="text"
                   placeholder="Search ID, location..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 />
               </div>
 
-              {/* Category Filter */}
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700"
-              >
-                <option value="all">All Categories</option>
-                <option value="hazard">Hazards</option>
-                <option value="lighting">Lighting</option>
-                <option value="suspicious">Suspicious</option>
-                <option value="theft">Theft</option>
-                <option value="harassment">Harassment</option>
-                <option value="medical">Medical</option>
-                <option value="other">General</option>
-              </select>
+              <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+                {/* Category Filter */}
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="w-full sm:w-auto px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="hazard">Hazards</option>
+                  <option value="lighting">Lighting</option>
+                  <option value="suspicious">Suspicious</option>
+                  <option value="theft">Theft</option>
+                  <option value="harassment">Harassment</option>
+                  <option value="medical">Medical</option>
+                  <option value="other">General</option>
+                </select>
 
-              {/* Status Filter */}
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700"
-              >
-                <option value="all">All Statuses</option>
-                <option value="reported">Reported</option>
-                <option value="under_review">Under Review</option>
-                <option value="under_action">Under Action</option>
-                <option value="resolved">Resolved</option>
-              </select>
+                {/* Status Filter */}
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full sm:w-auto px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="reported">Reported</option>
+                  <option value="under_review">Under Review</option>
+                  <option value="under_action">Under Action</option>
+                  <option value="resolved">Resolved</option>
+                </select>
+              </div>
             </div>
           </CardHeader>
 

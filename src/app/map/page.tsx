@@ -7,7 +7,7 @@ import { IncidentReport, ReportCategory, ReportSeverity } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge, SeverityBadge, CategoryBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Search, Filter, Layers, AlertOctagon, X, Calendar, User, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { MapPin, Search, Filter, Layers, AlertOctagon, X, Calendar, User, CheckCircle2, AlertTriangle, ShieldCheck, Clock } from 'lucide-react';
 
 const DynamicSafetyMap = dynamic(() => import('@/components/map/SafetyMapComponent'), {
   ssr: false,

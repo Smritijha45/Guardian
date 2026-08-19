@@ -1,19 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { useSafety } from '@/lib/store';
 import { useToast } from '@/components/ui/toast';
 import { ReportStatus, IncidentReport, ReportCategory } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { StatusBadge, SeverityBadge, CategoryBadge } from '@/components/ui/badge';
+import { StatusBadge, CategoryBadge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
-import { ShieldCheck, MapPin, Edit3, Trash2, Search, ShieldAlert, Eye, Calendar, User, Camera, Clock, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, MapPin, Edit3, Trash2, Search, ShieldAlert, Calendar, Camera, Clock } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const { reports, updateReportStatus, deleteReport, currentRole, setRole, proactiveAlerts } = useSafety();
+  const { reports, updateReportStatus, deleteReport, currentRole, setRole } = useSafety();
   const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
